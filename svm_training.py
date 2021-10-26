@@ -44,18 +44,20 @@ training_percent = 0.7
 sets = train_test_split(df, training_percent)[0]
 training = sets[0]
 test = sets[1]
+C = 0.0001
+kernel = 'rbf'
 
 # enfoque uno contra uno para encontrar hiperplanos que separen clases
 training_cielo_pasto = training[(training['Clase'] == cielo_class) | (training['Clase'] == pasto_class)]
 training_cielo_vaca = training[(training['Clase'] == cielo_class) | (training['Clase'] == 3)]
 training_pasto_vaca = training[(training['Clase'] == vaca_class) | (training['Clase'] == pasto_class)]
 
-model_cielo_pasto = utl.svm_train(training_cielo_pasto)
-model_cielo_vaca = utl.svm_train(training_cielo_vaca)
-model_pasto_vaca = utl.svm_train(training_pasto_vaca)
+model_cielo_pasto = utl.svm_train(training_cielo_pasto, C=C, kernel=kernel)
+model_cielo_vaca = utl.svm_train(training_cielo_vaca, C=C, kernel=kernel)
+model_pasto_vaca = utl.svm_train(training_pasto_vaca, C=C, kernel=kernel)
 
 # save the model to disk
-test.to_csv('test_set')
-pickle.dump(model_cielo_pasto, open('model_cielo_pasto.sav', 'wb'))
-pickle.dump(model_cielo_vaca, open('model_cielo_vaca.sav', 'wb'))
-pickle.dump(model_pasto_vaca, open('model_pasto_vaca.sav', 'wb'))
+test.to_csv('test_set.csv')
+pickle.dump(model_cielo_pasto, open('model_cielo_pasto' + str(C) + '_' + kernel + '.sav', 'wb'))
+pickle.dump(model_cielo_vaca, open('model_cielo_vaca' + str(C) + '_' + kernel + '.sav', 'wb'))
+pickle.dump(model_pasto_vaca, open('model_pasto_vaca' + str(C) + '_' + kernel + '.sav', 'wb'))

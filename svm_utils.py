@@ -37,7 +37,7 @@ def most_voted(prediction):
     class_count = [0, 0, 0]
     for elem in prediction:
         # -1 porque el minimo es 1
-        class_count[elem-1] += 1
+        class_count[int(elem)-1] += 1
     max_value = max(class_count)
     if max_value == 1:
         pred = np.random.randint(1, 4)
@@ -50,16 +50,16 @@ def summarize_predictions(predictions):
     data = []
     for prediction in predictions:
         data.append(most_voted(prediction))
-    return pd.DataFrame(data=data, columns=['Clase'])
+    return pd.DataFrame(data=data, columns=['Clase'], dtype=np.int64)
 
 
 def get_confusion_matrix(testing, predictions):
     confusion_matrix = ConfusionMatrix(['1, 2, 3'])
     final_predictions = summarize_predictions(predictions)
-    classifications = pd.concat([testing['Clase'], final_predictions['Clase']], axis=0)
-    # classifications = zip(testing['Clase'], final_predictions['Clase'])
+    classifications = pd.concat([testing['Clase'], final_predictions['Clase']], axis=1)
+    classifications = np.array(classifications)
     for classification in classifications:
         # -1 porque las clasificaciones arrancan en 1 y romperian los indices de la matriz
-        confusion_matrix.add_entry(classification.iloc[0]-1, classification.iloc[1]-1)
+        confusion_matrix.add_entry(classification[0]-1, classification[1]-1)
     confusion_matrix.summarize()
     return confusion_matrix, final_predictions

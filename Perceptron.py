@@ -20,6 +20,10 @@ class Perceptron:
         self.learning_rate = 0
         self.last_activation_value = 0
 
+    def set_weights(self, weights):
+        w = [weights]
+        self.weights = np.array(w)
+
     def run(self, training_example, run_mode):
         x = np.array(training_example[:-1])  # training menos label
         x = np.append(x, [1])  # agrego el 1 del bias
@@ -27,8 +31,9 @@ class Perceptron:
         activation = self.activation_function.get_value(excitement[0])
 
         error = classification_error(activation, training_example[-1])
-        delta = self.learning_rate * (training_example[-1] - activation) * x  # * self.activation_function.get_derivative(excitement[0])
         if run_mode == "training":
+            # * self.activation_function.get_derivative(excitement[0])
+            delta = self.learning_rate * (training_example[-1] - activation) * x
             return delta, error
         else:
             return activation, error
